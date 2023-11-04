@@ -5,9 +5,10 @@
   "main": "transaction-tracker.js",
   "type": "module",
   "scripts": {
-    "start": "node mirror.js"
+    "start": "node transaction-tracker.js"
   },
   "devDependencies": {
-    "fs-extra": "9.0.1"
+    "fs-extra": "9.0.1",
+    "csvtojson": "2.0.10"
   }
 }
