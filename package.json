@@ -1,0 +1,13 @@
+{
+  "name": "transaction-tracker",
+  "version": "1.0.0",
+  "description": "Classifies transactions downloaded from a bank",
+  "main": "transaction-tracker.js",
+  "type": "module",
+  "scripts": {
+    "start": "node mirror.js"
+  },
+  "devDependencies": {
+    "fs-extra": "9.0.1"
+  }
+}
