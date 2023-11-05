@@ -53,12 +53,6 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
     "Internet", "Mobile Phone", "Mortgage & Rent", "Service & Parts", "Tuition", "Utilities"];
 
 (() => {
-    const categoryToAmountByYearMonthMap = {};
-
-    // Read in the current statements
-    const files = getFiles("./statements");
-    let parsedFiles = 0;
-
     // Output helpers
     const cp = c => c === "Uncategorized" ? chalk.red(c) : chalk.blue(c);                               // Category Print
     const dp = d => chalk.yellow(d);                                                                    // Date Print
@@ -115,6 +109,12 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
         console.error(`\n\n`);
     }
 
+    const categoryToAmountByYearMonthMap = {};
+
+    // Read in the current statements
+    const files = getFiles("./statements");
+    let parsedFiles = 0;
+
     // Parse and classify
     files.forEach(file =>
         csvtojson({noheader: true, headers: ["date", "description", "debit", "credit", "balance"]})
@@ -129,10 +129,10 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
 
                     const category = (Object.entries(categoryToVendorAndRulesMap)
                         // Sort by priority, lower goes first
-                        .sort((vcm1, vcm2) => vcm1[1].p - vcm2[1].p)
-                        .find(([, {r, c}]) =>
+                        .sort((c2vrm1, c2vrm2) => c2vrm1[1].p - c2vrm2[1].p)
+                        .find(([, {r, c: constraint}]) =>
                             // Matches at least one of the regexes in the list and passes the custom filter if one exists
-                            r.some(regex => regex.test(transaction.description)) && (!c || c(transaction)))
+                            r.some(regex => regex.test(transaction.description)) && (!constraint || constraint(transaction)))
                         || ["Uncategorized"])[0];
 
                     // Create objects and set defaults if they don't exist
