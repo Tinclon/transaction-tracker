@@ -57,7 +57,7 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
 
     // Read in the current statements
     const files = getFiles("./statements");
-    var parsedFiles = 0;
+    let parsedFiles = 0;
 
     // Output helpers
     const cp = c => c === "Uncategorized" ? chalk.red(c) : chalk.blue(c);                               // Category Print
@@ -65,7 +65,8 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
     const np = n => n < 0 ? chalk.red(ra(nlp(n), 12)) : chalk.green(ra(nlp(n), 12));        // Number Print
     const nlp = n => n.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});     // Number Locale Print
     const ra = (text, width) => " ".repeat(width - text.length) + text                            // Right Align
-    const output = () =>
+    const output = () => {
+        // Output data by yearMonth
         Object.keys(categoryToAmountByYearMonthMap).sort().forEach(yearMonth => {
             // Output the yearMonth header
             console.error(chalk.bold.yellow(`\n===============================================================================`));
@@ -73,13 +74,32 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
             console.error(chalk.bold.yellow(`===============================================================================\n`));
             Object.keys(categoryToAmountByYearMonthMap[yearMonth]).sort().forEach(category => {
                 if (category === "Transfer") { return; }
-                const prefix = specialCategories.some(sc => sc === category) ? chalk.magenta("*") : "";
+                const pfix = specialCategories.some(sc => sc === category) ? chalk.magenta("*") : "";
                 // Output the category header
-                console.error(chalk.bold(`${np(categoryToAmountByYearMonthMap[yearMonth][category].a)} ${prefix}${cp(category)}${prefix}`));
+                console.error(chalk.bold(`${np(categoryToAmountByYearMonthMap[yearMonth][category].a)} ${pfix}${cp(category)}${pfix}`));
                 // Output the transactions
                 categoryToAmountByYearMonthMap[yearMonth][category].t.sort().forEach(transaction => console.error(`\t\t${transaction}`));
             });
         });
+
+        // Output summary
+        console.error(chalk.bold.green(`\n===============================================================================`));
+        console.error(chalk.bold.green(`================================>   SUMMARY   <================================`));
+        console.error(chalk.bold.green(`===============================================================================\n`));
+        console.error(chalk.bold(chalk.green(`\t      Income`) + chalk.red(`\t     Expense`) + chalk.grey(`\t\t Net\n`)));
+
+        Object.keys(categoryToAmountByYearMonthMap).sort().forEach(yearMonth => {
+            let totalDebit = 0; let totalCredit = 0;
+            // Collect totals
+            Object.keys(categoryToAmountByYearMonthMap[yearMonth]).sort().forEach(category => {
+                categoryToAmountByYearMonthMap[yearMonth][category].a < 0 && (totalDebit += -1 * categoryToAmountByYearMonthMap[yearMonth][category].a);
+                categoryToAmountByYearMonthMap[yearMonth][category].a > 0 && (totalCredit += -1 * categoryToAmountByYearMonthMap[yearMonth][category].a);
+            });
+            console.error(`${dp(yearMonth)}\t${np(totalDebit)}\t${np(totalCredit)}\t`+chalk.bold(`${np(totalDebit + totalCredit)}`));
+        });
+
+        console.error(`\n\n`);
+    }
 
     // Parse and classify
     files.forEach(file =>
