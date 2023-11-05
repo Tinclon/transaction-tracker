@@ -102,8 +102,11 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
         // Output yearly summaries
         Object.keys(totalsByYear).sort().forEach(year => {
             Object.keys(totalsByYear[year].ym).sort().forEach(yearMonth =>
-                console.error(`${dp(yearMonth)}\t${np(totalsByYear[year].ym[yearMonth].d)}\t${np(totalsByYear[year].ym[yearMonth].c)}\t`+chalk.bold(`${np(totalsByYear[year].ym[yearMonth].d + totalsByYear[year].ym[yearMonth].c)}`)));
-            console.error(chalk.bold(chalk.yellow(`\n   ${year}`)+`\t${np(totalsByYear[year].d)}\t${np(totalsByYear[year].c)}\t${np(totalsByYear[year].d + totalsByYear[year].c)}`));
+                // Output Income, Expense, Net for each yearMonth
+                console.error(`${dp(yearMonth)}\t${np(totalsByYear[year].ym[yearMonth].d)}\t${np(totalsByYear[year].ym[yearMonth].c)}\t`
+                    + chalk.bold(`${np(totalsByYear[year].ym[yearMonth].d + totalsByYear[year].ym[yearMonth].c)}`)));
+            // Output Income, Expense, Net for each year
+            console.error(chalk.yellow.bold(`\n   ${year}`)+`\t${np(totalsByYear[year].d)}\t${np(totalsByYear[year].c)}\t${np(totalsByYear[year].d + totalsByYear[year].c)}`);
         });
 
         console.error(`\n\n`);
