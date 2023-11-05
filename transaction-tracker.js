@@ -1,5 +1,6 @@
 "use strict";
 
+import chalk from 'chalk';
 import { join } from "path";
 import fs_extra from "fs-extra";
 import csvtojson from "csvtojson";
@@ -49,45 +50,41 @@ const vendorToCategoryMap = {
 
 (() => {
     const categoryToAmountMap = {};
-    const uncategorizedTransactions = [];
 
     // Read in the current statements
     const files = getFiles("./statements");
-    var parsedFiles = 0;
 
-    const outputFn = () => {
+    const output = () => {
         // Output the totals
         Object.keys(categoryToAmountMap).sort().forEach(yearMonth => {
-            console.error(`${yearMonth}`);
+            console.error(chalk.bold(`${dp(yearMonth)}`));
             Object.keys(categoryToAmountMap[yearMonth]).sort().forEach(category => {
-                console.error(`\t${category}\t${categoryToAmountMap[yearMonth][category].a}`);
-                categoryToAmountMap[yearMonth][category].t.forEach(transaction => {
+                console.error(chalk.bold(`\t${np(np(categoryToAmountMap[yearMonth][category].a))}\t${cp(category)}`));
+                categoryToAmountMap[yearMonth][category].t.sort().forEach(transaction => {
                     console.error(`\t\t${transaction}`);
                 });
             });
         });
-        console.error("\n\nUncategorized Transactions");
-        uncategorizedTransactions.forEach(transaction => {
-            console.error(`${transaction}`);
-        })
     }
 
-    files.forEach(file => {
+    const cp = c => chalk.blue(c);
+    const dp = d => chalk.yellow(d);
+    const np = n => n < 0 ? chalk.red(nlp(n)) : chalk.green(nlp(n));
+    const nlp = n => n.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+    files.forEach((file, i) => {
         csvtojson({noheader: true, headers: ["date", "description", "debit", "credit", "balance"]})
             .fromFile(`./statements/${file}`)
             .then(json => {
                 // Classify them
                 json.forEach(transaction => {
                     const date = transaction.date.split("/");
+                    const isoDate = [date[2], date[0], date[1]].join("-");
                     const yearMonth = [date[2], date[0]].join("-");
                     const category = Object.keys(vendorToCategoryMap).find(category => {
                         return vendorToCategoryMap[category].r.some(regex => regex.test(transaction.description));
                     }) || "Uncategorized";
                     const amount = parseFloat(transaction.debit || `-${transaction.credit}`);// * (file.indexOf("HELOC") > -1 ? -1 : 1);
-
-                    if (category === "Uncategorized") {
-                        uncategorizedTransactions.push(`${transaction.date}\t${amount}\t${transaction.description}`);
-                    }
 
                     categoryToAmountMap[yearMonth] = categoryToAmountMap[yearMonth] || {};
                     categoryToAmountMap[yearMonth][category] = categoryToAmountMap[yearMonth][category] || {};
@@ -96,12 +93,10 @@ const vendorToCategoryMap = {
                     categoryToAmountMap[yearMonth][category].a = Math.round(categoryToAmountMap[yearMonth][category].a * 100) / 100;
 
                     categoryToAmountMap[yearMonth][category].t = categoryToAmountMap[yearMonth][category].t || [];
-                    categoryToAmountMap[yearMonth][category].t.push(`${transaction.date}\t${amount}\t${transaction.description}`);
+                    categoryToAmountMap[yearMonth][category].t.push(`${dp(isoDate)}\t${np(amount)}\t${transaction.description}`);
                 });
 
-                if (++parsedFiles === files.length) {
-                    outputFn();
-                }
+                i === files.length - 1 && output();
             });
     });
 
