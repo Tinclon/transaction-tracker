@@ -11,7 +11,7 @@ const getFiles = srcpath => readdirSync(srcpath).filter(file => !lstatSync(join(
 const categoryToVendorAndRulesMap = {
     "Airfare"                          : { p: 5, r: [/AIR TRANSAT.*/] },
     "Arts/Exhibits/Theatre/Museum/Zoo" : { p: 5, r: [/DEVILS TOWER.*/, /.*CODY CAVE TOURS/, /CRAZY HORSE.*/, /Groupon, Inc./, /NIAGARA PARKS COMMISSION/, /PN KOOTENAY WEST GATE NP/, /TIVOLI THEATRE/] },
-    "Allowance"                        : { p: 1, r: [/.*TFR-TO [ALST]N(SAV|SPD|TTH)/], c: t => [2.13,2.77,3.20,5.79,9.59,9.59,12.47,12.47,14.40,14.40,26.06,26.06].some(amt => amt === Math.abs(t.amount)) },
+    "Allowance"                        : { p: 1, r: [/.*TFR-TO [ALST]N(SAV|SPD|TTH)/], c: t => [2.13,2.77,3.20,5.79,9.59,12.47,14.40,26.06].some(amt => amt === Math.abs(t.amount)) },
     "Amusement Park"                   : { p: 5, r: [] },
     "Bank Fees & Charges"              : { p: 5, r: [/SEND E-TFR FEE/] },
     "Books & Supplies"                 : { p: 5, r: [/CARDSTONBOO.*/] },
