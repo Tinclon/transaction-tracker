@@ -67,7 +67,9 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
     const ra = (text, width) => " ".repeat(width - text.length) + text
     const output = () => {
         Object.keys(categoryToAmountMap).sort().forEach(yearMonth => {
-            console.error(chalk.bold(`${dp(yearMonth)}`));
+            console.error(chalk.bold.yellow(`\n===============================================================================`));
+            console.error(chalk.bold.yellow(`================================>   ${dp(yearMonth)}   <================================`));
+            console.error(chalk.bold.yellow(`===============================================================================\n`));
             Object.keys(categoryToAmountMap[yearMonth]).sort().forEach(category => {
                 if (category === "Transfer") { return; }
                 const prefix = specialCategories.some(sc => sc === category) ? chalk.magenta("*") : "";
