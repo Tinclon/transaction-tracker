@@ -53,65 +53,65 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
     "Internet", "Mobile Phone", "Mortgage & Rent", "Service & Parts", "Tuition", "Utilities"];
 
 (() => {
-    const categoryToAmountMap = {};
+    const categoryToAmountByYearMonthMap = {};
 
     // Read in the current statements
     const files = getFiles("./statements");
     var parsedFiles = 0;
 
     // Output helpers
-    const cp = c => c === "Uncategorized" ? chalk.red(c) : chalk.blue(c);
-    const dp = d => chalk.yellow(d);
-    const np = n => n < 0 ? chalk.red(ra(nlp(n), 12)) : chalk.green(ra(nlp(n), 12));
-    const nlp = n => n.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});
-    const ra = (text, width) => " ".repeat(width - text.length) + text
-    const output = () => {
-        Object.keys(categoryToAmountMap).sort().forEach(yearMonth => {
+    const cp = c => c === "Uncategorized" ? chalk.red(c) : chalk.blue(c);                               // Category Print
+    const dp = d => chalk.yellow(d);                                                                    // Date Print
+    const np = n => n < 0 ? chalk.red(ra(nlp(n), 12)) : chalk.green(ra(nlp(n), 12));        // Number Print
+    const nlp = n => n.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2});     // Number Locale Print
+    const ra = (text, width) => " ".repeat(width - text.length) + text                            // Right Align
+    const output = () =>
+        Object.keys(categoryToAmountByYearMonthMap).sort().forEach(yearMonth => {
+            // Output the yearMonth header
             console.error(chalk.bold.yellow(`\n===============================================================================`));
             console.error(chalk.bold.yellow(`================================>   ${dp(yearMonth)}   <================================`));
             console.error(chalk.bold.yellow(`===============================================================================\n`));
-            Object.keys(categoryToAmountMap[yearMonth]).sort().forEach(category => {
+            Object.keys(categoryToAmountByYearMonthMap[yearMonth]).sort().forEach(category => {
                 if (category === "Transfer") { return; }
                 const prefix = specialCategories.some(sc => sc === category) ? chalk.magenta("*") : "";
-                console.error(chalk.bold(`${np(categoryToAmountMap[yearMonth][category].a)} ${prefix}${cp(category)}${prefix}`));
-                categoryToAmountMap[yearMonth][category].t.sort().forEach(transaction => {
-                    console.error(`\t\t${transaction}`);
-                });
+                // Output the category header
+                console.error(chalk.bold(`${np(categoryToAmountByYearMonthMap[yearMonth][category].a)} ${prefix}${cp(category)}${prefix}`));
+                // Output the transactions
+                categoryToAmountByYearMonthMap[yearMonth][category].t.sort().forEach(transaction => console.error(`\t\t${transaction}`));
             });
         });
-    }
 
     // Parse and classify
-    files.forEach((file, i) => {
+    files.forEach(file =>
         csvtojson({noheader: true, headers: ["date", "description", "debit", "credit", "balance"]})
             .fromFile(`./statements/${file}`)
-            .then(json => {
-                json.forEach(transaction => {
+            .then(transactions => {
+                transactions.forEach(transaction => {
                     const date = transaction.date.split("/");
                     const isoDate = [date[2], date[0], date[1]].join("-");
                     const yearMonth = [date[2], date[0]].join("-");
 
-                    transaction.amount = parseFloat(transaction.debit || `-${transaction.credit}`);
+                    transaction.amount = parseFloat(`${transaction.debit}` || `-${transaction.credit}`);
 
                     const category = (Object.entries(categoryToVendorAndRulesMap)
-                        // Sort by priority, lower goes first.
+                        // Sort by priority, lower goes first
                         .sort((vcm1, vcm2) => vcm1[1].p - vcm2[1].p)
                         .find(([, {r, c}]) =>
-                            // Matches at least one of the regexes in the list and passes the custom filter if one exists.
+                            // Matches at least one of the regexes in the list and passes the custom filter if one exists
                             r.some(regex => regex.test(transaction.description)) && (!c || c(transaction)))
                         || ["Uncategorized"])[0];
 
-                    categoryToAmountMap[yearMonth] = categoryToAmountMap[yearMonth] || {};
-                    categoryToAmountMap[yearMonth][category] = categoryToAmountMap[yearMonth][category] || {};
-                    categoryToAmountMap[yearMonth][category].a = categoryToAmountMap[yearMonth][category].a || 0;
-                    categoryToAmountMap[yearMonth][category].a += transaction.amount;
-                    categoryToAmountMap[yearMonth][category].a = Math.round(categoryToAmountMap[yearMonth][category].a * 100) / 100;
+                    // Create objects and set defaults if they don't exist
+                    categoryToAmountByYearMonthMap[yearMonth] = categoryToAmountByYearMonthMap[yearMonth] || {};
+                    categoryToAmountByYearMonthMap[yearMonth][category] = categoryToAmountByYearMonthMap[yearMonth][category] || {a: 0, t: []};
 
-                    categoryToAmountMap[yearMonth][category].t = categoryToAmountMap[yearMonth][category].t || [];
-                    categoryToAmountMap[yearMonth][category].t.push(`${dp(isoDate)}${np(transaction.amount)}\t${transaction.description}`);
+                    // Add the transaction to the category
+                    categoryToAmountByYearMonthMap[yearMonth][category].a += Math.round(transaction.amount * 100) / 100;
+                    categoryToAmountByYearMonthMap[yearMonth][category].t.push(`${dp(isoDate)}${np(transaction.amount)}\t${transaction.description}`);
                 });
 
+                // Output if we're done
                 ++parsedFiles === files.length && output();
-            });
-    });
+            })
+    )
 })();
