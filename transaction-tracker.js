@@ -31,10 +31,11 @@ const categoryToVendorAndRulesMap = {
     "Hotel"                            : { p: 5, r: [/BAYMONT INN.*/, /COUNTRY INN & SUITES.*/, /FAIRBRIDGE INN & SUITES.*/, /HOLIDAY INN EXPRESS.*/, /MY PLACE HOTELS/, /RAMADA/, /SOUTHBRIDGE HOTEL.*/, /WESTWOOD INN & SUITES/] },
     "Income - Primary"                 : { p: 5, r: [/INTUIT CANADA U.*PAY/] },
     "Income - Secondary"               : { p: 5, r: [/KTUNAXA KINBASK.*PAY/] },
+    "Income - Tertiary (Dividends)"    : { p: 5, r: [/.*TFR-FR [0-9]{7}/] },
     "Internet"                         : { p: 5, r: [/INTUIT CANADA.*AP/, /TELUS PRE-AUTH PAYMENT/] },
     "Media & Entertainment"            : { p: 5, r: [/NETFLIX\.COM/] },
     "Mobile Phone"                     : { p: 5, r: [/BELL MOBILITY.*/, /VIRGIN PLUS/] },
-    "Mortgage & Rent"                  : { p: 5, r: [/INTEREST/, /LN PYMT.*[0-9]{9}/, /TFR-FR [0-9]{7}/] },
+    "Mortgage & Rent"                  : { p: 5, r: [/INTEREST/, /LN PYMT.*[0-9]{9}/] },
     "Office Supplies"                  : { p: 5, r: [/CRESTON CARD & STATION/, /STAPLES STORE.*/] },
     "Pets"                             : { p: 5, r: [/HOUND N MOUSER.*/, /.*PET ADOPTION.*/, /PETLAND.*/, /PETSMART.*/, /.*VETERINARY.*/] },
     "Parking"                          : { p: 5, r: [/CALGARY AIRPORT EXIT TOLL/, /.*PARKING.*/] },
@@ -48,9 +49,8 @@ const categoryToVendorAndRulesMap = {
     "Tuition"                          : { p: 5, r: [/IXL FAMILY SUB.*/] },
     "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
 };
-const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optometrist",
-    "Gas & Fuel", "Groceries", "Insurance - Auto", "Insurance - Home", "Insurance - Travel",
-    "Internet", "Mobile Phone", "Mortgage & Rent", "Service & Parts", "Tuition", "Utilities"];
+const specialCategories = [/Allowance/, /Clothing/, /Doctor\/Dentist\/Chiro\/Optometrist/, /Gas & Fuel/, /Groceries/,
+    /Insurance.*/, /Internet/, /Mobile Phone/, /Mortgage & Rent/, /Property Tax/, /Service & Parts/, /Tuition/, /Utilities/];
 
 (() => {
     // Output helpers
@@ -62,18 +62,24 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
     const output = () => {
         // Output data by yearMonth
         Object.keys(categoryToAmountByYearMonthMap).sort().forEach(yearMonth => {
+            let specialCategoryAmounts = Array(specialCategories.length).fill(0);
             // Output the yearMonth header
             console.error(chalk.bold.yellow(`\n===============================================================================`));
             console.error(chalk.bold.yellow(`================================>   ${dp(yearMonth)}   <================================`));
             console.error(chalk.bold.yellow(`===============================================================================\n`));
             Object.keys(categoryToAmountByYearMonthMap[yearMonth]).sort().forEach(category => {
                 if (category === "Transfer") { return; }
-                const pfix = specialCategories.some(sc => sc === category) ? chalk.magenta("*") : "";
+                const pfix = specialCategories.some(sc => sc.test(category)) ? chalk.magenta("*") : "";
+                // Replace special categories with their amounts
+                let specialCategoryIndex = specialCategories.findIndex(sc => sc.test(category));
+                 specialCategoryAmounts[specialCategoryIndex++] += categoryToAmountByYearMonthMap[yearMonth][category].a;
                 // Output the category header
                 console.error(chalk.bold(`${np(categoryToAmountByYearMonthMap[yearMonth][category].a)} ${pfix}${cp(category)}${pfix}`));
                 // Output the transactions
                 categoryToAmountByYearMonthMap[yearMonth][category].t.sort().forEach(transaction => console.error(`\t\t${transaction}`));
             });
+            console.error("\nSpecial Categories");
+            console.error(specialCategoryAmounts.map(sca => np(sca)).join("\t"));
         });
 
         // Output summary
@@ -143,7 +149,7 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
                     categoryToAmountByYearMonthMap[yearMonth][category] = categoryToAmountByYearMonthMap[yearMonth][category] || {a: 0, t: []};
 
                     // Add the transaction to the category
-                    categoryToAmountByYearMonthMap[yearMonth][category].a += Math.round(transaction.amount * 100) / 100;
+                    categoryToAmountByYearMonthMap[yearMonth][category].a += transaction.amount;
                     categoryToAmountByYearMonthMap[yearMonth][category].t.push(`${dp(isoDate)}${np(transaction.amount)}\t${transaction.description}`);
                 });
 
