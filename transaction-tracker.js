@@ -88,14 +88,28 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
         console.error(chalk.bold.green(`===============================================================================\n`));
         console.error(chalk.bold(chalk.green(`\t      Income`) + chalk.red(`\t     Expense`) + chalk.grey(`\t\t Net\n`)));
 
+        // Collect totals by yearMonth and by year
+        const totalsByYear = {};
         Object.keys(categoryToAmountByYearMonthMap).sort().forEach(yearMonth => {
+            const year = yearMonth.split("-")[0];
             let totalDebit = 0; let totalCredit = 0;
-            // Collect totals
-            Object.keys(categoryToAmountByYearMonthMap[yearMonth]).sort().forEach(category => {
+            // Collect totals by yearMonth
+            Object.keys(categoryToAmountByYearMonthMap[yearMonth]).forEach(category => {
                 categoryToAmountByYearMonthMap[yearMonth][category].a < 0 && (totalDebit += -1 * categoryToAmountByYearMonthMap[yearMonth][category].a);
                 categoryToAmountByYearMonthMap[yearMonth][category].a > 0 && (totalCredit += -1 * categoryToAmountByYearMonthMap[yearMonth][category].a);
             });
-            console.error(`${dp(yearMonth)}\t${np(totalDebit)}\t${np(totalCredit)}\t`+chalk.bold(`${np(totalDebit + totalCredit)}`));
+
+            // Collect totals by year
+            totalsByYear[year] = totalsByYear[year] || {d: 0, c: 0, ym: {}};
+            totalsByYear[year].ym[yearMonth] = {d: totalDebit, c: totalCredit};
+            totalsByYear[year].d += totalDebit; totalsByYear[year].c += totalCredit;
+        });
+
+        // Output yearly summaries
+        Object.keys(totalsByYear).sort().forEach(year => {
+            Object.keys(totalsByYear[year].ym).sort().forEach(yearMonth =>
+                console.error(`${dp(yearMonth)}\t${np(totalsByYear[year].ym[yearMonth].d)}\t${np(totalsByYear[year].ym[yearMonth].c)}\t`+chalk.bold(`${np(totalsByYear[year].ym[yearMonth].d + totalsByYear[year].ym[yearMonth].c)}`)));
+            console.error(chalk.bold(chalk.yellow(`\n   ${year}`)+`\t${np(totalsByYear[year].d)}\t${np(totalsByYear[year].c)}\t${np(totalsByYear[year].d + totalsByYear[year].c)}`));
         });
 
         console.error(`\n\n`);
