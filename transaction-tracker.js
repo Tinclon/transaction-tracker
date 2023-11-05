@@ -46,7 +46,7 @@ const categoryToVendorAndRulesMap = {
     "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRICUT/, /DOLLAR TREE.*/, /ETSY/, /MORRIS FLOWERS/, /SP FUTUREMOTIONINC/, /WISH\.COM/, /.*MODERN ALCHEMY.*/, /WAL-MART.*/, /YOUR DOLLAR STORE.*/] },
     "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/] },
     "Tuition"                          : { p: 5, r: [/IXL FAMILY SUB.*/] },
-    "Utilities"                        : { p: 5, r: [/(Fortis|FORTIS)BC.*/] },
+    "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
 };
 const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optometrist",
     "Gas & Fuel", "Groceries", "Insurance - Auto", "Insurance - Home", "Insurance - Travel",
@@ -90,7 +90,7 @@ const specialCategories = ["Allowance", "Clothing", "Doctor/Dentist/Chiro/Optome
 
         // Collect totals by yearMonth and by year
         const totalsByYear = {};
-        Object.keys(categoryToAmountByYearMonthMap).sort().forEach(yearMonth => {
+        Object.keys(categoryToAmountByYearMonthMap).forEach(yearMonth => {
             const year = yearMonth.split("-")[0];
             let totalDebit = 0; let totalCredit = 0;
             // Collect totals by yearMonth
