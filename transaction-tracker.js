@@ -149,7 +149,7 @@ const process = transactions => {
 (() => {
     // Read in the current statements
     const transactions = {};
-    const files = getFiles("./statements");
+    const files = getFiles("./statements").filter(file => file.endsWith(".csv"));
     let parsedFiles = 0;
 
     // Parse and dedupe the transactions
