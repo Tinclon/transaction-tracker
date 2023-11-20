@@ -14,7 +14,7 @@ const categoryToVendorAndRulesMap = {
     "Allowance"                        : { p: 1, r: [/.*TFR-TO [ALST]N(SAV|SPD|TTH)/], c: t => [2.13,2.77,3.20,5.79,9.59,12.47,14.40,26.06].some(amt => amt === Math.abs(t.amount)) },
     "Amusement Park"                   : { p: 5, r: [] },
     "Bank Fees & Charges"              : { p: 5, r: [/SEND E-TFR FEE/] },
-    "Books & Supplies"                 : { p: 5, r: [/CARDSTONBOO.*/] },
+    "Books & Supplies"                 : { p: 5, r: [/CARDSTONBOO.*/, /Kindle.*/] },
     "Clothing"                         : { p: 5, r: [/COSTCO WHSE.*/, /Decathlon Canada.*/, /LDS SPOKANE CENTER.*/, /LEGEND LOGOS/, /MARK'S STORE.*/, /NORTH 40 OUTFITTERS.*/, /TARGET.*/] },
     "Doctor/Dentist/Chiro/Optometrist" : { p: 5, r: [/.*KOOTENAY CHIROPRA/, /NISH DENTAL CLINIC/, /SUN LIFE.*/] },
     "Electronics & Software"           : { p: 5, r: [/Amazon Downloads.*/, /APPLE\.COM\/BILL/, /GOOGLE \*Google Storage/] },
@@ -27,7 +27,7 @@ const categoryToVendorAndRulesMap = {
     "Insurance - Auto"                 : { p: 5, r: [/ICBC.*INS/] },
     "Insurance - Home"                 : { p: 5, r: [/TD Ins\/TD Assur.*INS/] },
     "Insurance - Travel"               : { p: 5, r: [/WESTERN FINANCIAL GROUP/] },
-    "Horse"                            : { p: 5, r: [/SEND E-TFR.*/, /TANGLEFOOT VETERINARY.*/], c: t => t.description.indexOf("SEND") === -1 || Math.abs(t.amount) === 520 },
+    "Horse"                            : { p: 5, r: [/SEND E-TFR.*/, /TANGLEFOOT VETERINARY.*/], c: t => t.description.indexOf("SEND") === -1 || Math.abs(t.amount) === 520 || Math.abs(t.amount) === 650 },
     "Hotel"                            : { p: 5, r: [/BAYMONT INN.*/, /COUNTRY INN & SUITES.*/, /FAIRBRIDGE INN & SUITES.*/, /HOLIDAY INN EXPRESS.*/, /MY PLACE HOTELS/, /RAMADA/, /SOUTHBRIDGE HOTEL.*/, /WESTWOOD INN & SUITES/] },
     "Income - Primary"                 : { p: 5, r: [/INTUIT CANADA U.*PAY/] },
     "Income - Secondary"               : { p: 5, r: [/KTUNAXA KINBASK.*PAY/] },
@@ -44,10 +44,17 @@ const categoryToVendorAndRulesMap = {
     "Registration & Licensing"         : { p: 5, r: [/ICBC.*/] },
     "Restaurants"                      : { p: 5, r: [/APPLEBEES.*/, /BOSTONS? PIZZA.*/, /DENNY'S.*/, /MARLINS FAMILY RESTAUR/, /OLIVE GARD.*/, /ROCKY RIVER GRILL/, /SWISS CHALET.*/] },
     "Service & Parts"                  : { p: 5, r: [/HIGH CALIBER AUTO COLL.*/, /INTEGRA TIRE/, /LORDCO PARTS.*/, /NAPA ASSOCIATE.*/] },
-    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRICUT/, /DOLLAR TREE.*/, /ETSY/, /MORRIS FLOWERS/, /SP FUTUREMOTIONINC/, /WISH\.COM/, /.*MODERN ALCHEMY.*/, /WAL-MART.*/, /YOUR DOLLAR STORE.*/] },
+    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /MORRIS FLOWERS/, /SP FUTUREMOTIONINC/, /WISH\.COM/, /.*MODERN ALCHEMY.*/, /WAL-MART.*/, /YOUR DOLLAR STORE.*/] },
     "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/] },
     "Tuition"                          : { p: 5, r: [/IXL FAMILY SUB.*/] },
     "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
+};
+const customCategorization = t => {
+    // Special cases
+    if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 428.26) { return "Groceries"; }  // Reimbursement for groceries
+    if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 388.93) { return "Shopping"; }   // Reimbursement for foster shopping
+    if (t.description.indexOf("APPLE.COM/BILL") !== -1 && Math.abs(t.amount) === 157.49) { return "Books & Supplies"; } // Duolingo
+    return null;
 };
 const specialCategories = [/Allowance/, /Clothing/, /Doctor\/Dentist\/Chiro\/Optometrist/, /Gas & Fuel/, /Groceries/,
     /Insurance.*/, /Internet/, /Mobile Phone/, /Mortgage & Rent/, /Property Tax/, /Service & Parts/, /Tuition/, /Utilities/];
@@ -126,7 +133,8 @@ const process = transactions => {
 
         transaction.amount = parseFloat(`${transaction.debit}` || `-${transaction.credit}`);
 
-        const category = (Object.entries(categoryToVendorAndRulesMap)
+        const category = customCategorization(transaction)
+            || (Object.entries(categoryToVendorAndRulesMap)
                 // Sort by priority, lower goes first
                 .sort((c2vrm1, c2vrm2) => c2vrm1[1].p - c2vrm2[1].p)
                 .find(([, {r, c: constraint}]) =>
