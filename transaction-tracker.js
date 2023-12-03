@@ -19,7 +19,7 @@ const categoryToVendorAndRulesMap = {
     "Doctor/Dentist/Chiro/Optometrist" : { p: 5, r: [/.*KOOTENAY CHIROPRA/, /NISH DENTAL CLINIC/, /SUN LIFE.*/] },
     "Electronics & Software"           : { p: 5, r: [/Amazon Downloads.*/, /APPLE\.COM\/BILL/, /GOOGLE \*Google Storage/] },
     "Fast Food"                        : { p: 5, r: [/A&W.*/, /ARBY'S.*/, /BOOSTER JUICE.*/, /DAIRY QUEEN.*/, /HARVEYS.*/, /MCDONALD'S.*/, /KFC/, /PANAGO.*/, /PIZZA PIZZA.*/, /.*STONE COLD ICE CREAM.*/, /Subway.*/, /TACO BELL.*/, /TACO TIME CANTINA.*/, /TIM HORTON'?S.*/, /.*WAREHOUSE PIZZA/, /WENDY'?S.*/] },
-    "Fitness & Gym / Pool"             : { p: 5, r: [/AINSWORTH HOT SPRINGS.*/, /ARQ MOUNTAIN CENTRE/] },
+    "Fitness & Gym / Pool"             : { p: 5, r: [/AINSWORTH HOT SPRINGS.*/, /ARQ MOUNTAIN CENTRE/, /DISTRICT OF CENTRAL KOOTE/] },
     "Gas & Fuel"                       : { p: 5, r: [/CBSA\/ASFC RYKERTS/, /CHEVRON.*/, /CHV40149 CRANBROOK CHE/, /CONOCO.*/, /.*ESSO.*/, /EXXON.*/, /HUSKY.*/, /MOBIL@.*/, /PETRO.?CAN.*/, /SHELL.*/, /.*WESTMOND/] },
     "Groceries"                        : { p: 5, r: [/7[- ]ELEVEN.*/, /FARAMAN FARM/, /.*MARAR ORCHARD.*/, /.*MAX'S PLACE/, /PAUL'S SUPERETTE/, /PEALOW'S YOUR INDEPEND.*/, /REAL (CDN|CANADIAN) SUPER.*/, /SAFEWAY.*/, /SAVE ON FOODS.*/, /WALGREENS.*/, /WLOKA FARMS FRUIT STAND.*/, /WYNNDEL FOODS/] },
     "Hobbies"                          : { p: 5, r: [] },
@@ -28,7 +28,7 @@ const categoryToVendorAndRulesMap = {
     "Insurance - Home"                 : { p: 5, r: [/TD Ins\/TD Assur.*INS/] },
     "Insurance - Travel"               : { p: 5, r: [/WESTERN FINANCIAL GROUP/] },
     "Horse"                            : { p: 5, r: [/SEND E-TFR.*/, /TANGLEFOOT VETERINARY.*/], c: t => t.description.indexOf("SEND") === -1 || Math.abs(t.amount) === 520 || Math.abs(t.amount) === 650 },
-    "Hotel"                            : { p: 5, r: [/BAYMONT INN.*/, /COUNTRY INN & SUITES.*/, /FAIRBRIDGE INN & SUITES.*/, /HOLIDAY INN EXPRESS.*/, /MY PLACE HOTELS/, /RAMADA/, /SOUTHBRIDGE HOTEL.*/, /WESTWOOD INN & SUITES/] },
+    "Hotel"                            : { p: 5, r: [/BAYMONT INN.*/, /COUNTRY INN & SUITES.*/, /EXPEDIA.*/, /FAIRBRIDGE INN & SUITES.*/, /HOLIDAY INN EXPRESS.*/, /MY PLACE HOTELS/, /RAMADA/, /SOUTHBRIDGE HOTEL.*/, /WESTWOOD INN & SUITES/] },
     "Income - Primary"                 : { p: 5, r: [/INTUIT CANADA U.*PAY/] },
     "Income - Secondary"               : { p: 5, r: [/KTUNAXA KINBASK.*PAY/] },
     "Income - Tertiary (Dividends)"    : { p: 5, r: [/.*TFR-FR [0-9]{7}/] },
@@ -44,16 +44,17 @@ const categoryToVendorAndRulesMap = {
     "Registration & Licensing"         : { p: 5, r: [/ICBC.*/] },
     "Restaurants"                      : { p: 5, r: [/APPLEBEES.*/, /BOSTONS? PIZZA.*/, /DENNY'S.*/, /MARLINS FAMILY RESTAUR/, /OLIVE GARD.*/, /ROCKY RIVER GRILL/, /SWISS CHALET.*/] },
     "Service & Parts"                  : { p: 5, r: [/HIGH CALIBER AUTO COLL.*/, /INTEGRA TIRE/, /LORDCO PARTS.*/, /NAPA ASSOCIATE.*/] },
-    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /MORRIS FLOWERS/, /SP FUTUREMOTIONINC/, /WISH\.COM/, /.*MODERN ALCHEMY.*/, /WAL-MART.*/, /YOUR DOLLAR STORE.*/] },
+    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /.*MODERN ALCHEMY.*/, /MORRIS FLOWERS/, /SHUTTERFLY, INC\./, /SP FUTUREMOTIONINC/, /SQ \*HONEY BEE ZEN APIARIE/, /STYLETIFY/, /WAL-MART.*/, /WISH\.COM/, /YOUR DOLLAR STORE.*/] },
     "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/] },
     "Tuition"                          : { p: 5, r: [/IXL FAMILY SUB.*/] },
     "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
 };
 const customCategorization = t => {
     // Special cases
-    if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 428.26) { return "Groceries"; }  // Reimbursement for groceries
-    if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 388.93) { return "Shopping"; }   // Reimbursement for foster shopping
-    if (t.description.indexOf("APPLE.COM/BILL") !== -1 && Math.abs(t.amount) === 157.49) { return "Books & Supplies"; } // Duolingo
+    if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 428.26) { return "Groceries"; }          // Reimbursement for groceries
+    if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 388.93) { return "Shopping"; }           // Reimbursement for foster shopping
+    if (t.description.indexOf("APPLE.COM/BILL") !== -1 && Math.abs(t.amount) === 157.49) { return "Books & Supplies"; }         // Duolingo
+    if (t.description.indexOf("APPLE.COM/BILL") !== -1 && Math.abs(t.amount) === 131.23) { return "Media & Entertainment"; }    // Disney+
     return null;
 };
 const specialCategories = [/Allowance/, /Clothing/, /Doctor\/Dentist\/Chiro\/Optometrist/, /Gas & Fuel/, /Groceries/,
