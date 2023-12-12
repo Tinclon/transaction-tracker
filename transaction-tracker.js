@@ -75,7 +75,7 @@ const output = categoryToAmountByYearMonthMap => {
         console.error(chalk.bold.yellow(`================================>   ${dp(yearMonth)}   <================================`));
         console.error(chalk.bold.yellow(`===============================================================================\n`));
         Object.keys(categoryToAmountByYearMonthMap[yearMonth]).sort().forEach(category => {
-            if (category === "Transfer") { return; }
+            //if (category === "Transfer") { return; }
             const pfix = specialCategories.some(sc => sc.test(category)) ? chalk.magenta("*") : "";
             // Replace special categories with their amounts
             let specialCategoryIndex = specialCategories.findIndex(sc => sc.test(category));
@@ -85,7 +85,7 @@ const output = categoryToAmountByYearMonthMap => {
             // Output the transactions
             categoryToAmountByYearMonthMap[yearMonth][category].t.sort().forEach(transaction => console.error(`\t\t${transaction}`));
         });
-        console.error("\nSpecial Categories");
+        console.error("\nSpecial Categories:" + chalk.bold(np(specialCategoryAmounts.reduce((a, b) => a + b, 0))));
         console.error(specialCategoryAmounts.map(sca => np(sca)).join("\t"));
     });
 
