@@ -9,26 +9,26 @@ const { readdirSync, lstatSync } = fs_extra;
 const getFiles = srcpath => readdirSync(srcpath).filter(file => !lstatSync(join(srcpath, file)).isDirectory());
 
 const categoryToVendorAndRulesMap = {
-    "Airfare"                          : { p: 5, r: [/AIR TRANSAT.*/] },
-    "Arts/Exhibits/Theatre/Museum/Zoo" : { p: 5, r: [/DEVILS TOWER.*/, /.*CODY CAVE TOURS/, /CRAZY HORSE.*/, /SQ \*ESCAPE LEGENDS/, /Groupon, Inc./, /NIAGARA PARKS COMMISSION/, /PN KOOTENAY WEST GATE NP/, /TIVOLI THEATRE/] },
+    "Airfare"                          : { p: 5, r: [/AIR TRANSAT.*/, /DELTA AIR.*/, /WESTJET.*/] },
+    "Arts/Exhibits/Theatre/Museum/Zoo" : { p: 5, r: [/DEVILS TOWER.*/, /.*CODY CAVE TOURS/, /CRAZY HORSE.*/, /SQ \*ESCAPE LEGENDS/, /FSY.*/, /Groupon, Inc./, /NIAGARA PARKS COMMISSION/, /PN KOOTENAY WEST GATE NP/, /TIVOLI THEATRE/] },
     "Allowance"                        : { p: 1, r: [/.*TFR-TO [ALST]N(SAV|SPD|TTH)/], c: t => [2.13,2.35,2.77,3.04,3.20,3.77,4.14,5.79,6.37,9.59,10.58,12.47,13.68,14.40,16.97,18.63,26.06,28.67].some(amt => amt === Math.abs(t.amount)) },
-    "Amusement Park"                   : { p: 5, r: [] },
+    "Amusement Park/Skiing"            : { p: 5, r: [/RED MOUNTAIN RESORT/, /RED SPORTS/] },
     "Bank Fees & Charges"              : { p: 5, r: [/SEND E-TFR FEE/] },
-    "Books & Supplies"                 : { p: 5, r: [/CARDSTONBOO.*/, /Kindle.*/] },
-    "Clothing"                         : { p: 5, r: [/CALL IT SPRING.*/, /CLEO.*/, /COSTCO WHS.*/, /Decathlon Canada.*/, /HM West Edmonton Mall/, /LDS SPOKANE CENTER.*/, /LEGEND LOGOS/, /MARK'S STORE.*/, /MOUNTAIN WAREHOUSE/, /NORTH 40 OUTFITTERS.*/, /RICKI'S.*/, /SKECHERS.*/, /SP MANITOBAH MUKLUKS/, /TARGET.*/] },
+    "Books & Supplies"                 : { p: 5, r: [/CARDSTONBOO.*/, /Deseret Book.*/, /Kindle.*/] },
+    "Clothing"                         : { p: 5, r: [/CALL IT SPRING.*/, /CLEO.*/, /COSTCO WHS.*/, /Decathlon Canada.*/, /HM West Edmonton Mall/, /LDS DIST CANADA/, /LDS SPOKANE CENTER.*/, /LEGEND LOGOS/, /MARK'S STORE.*/, /MOUNTAIN WAREHOUSE/, /NORDSTROM RACK.*/, /NORTH 40 OUTFITTERS.*/, /OLD NAVY.*/, /RICKI'S.*/, /SKECHERS.*/, /SP MANITOBAH MUKLUKS/, /TARGET.*/] },
     "Donations"                        : { p: 5, r: [/Ch JesusChrist   DON/] },
     "Doctor/Dentist/Chiro/Optometrist" : { p: 5, r: [/DR. A.M. KAHANE DENTAL CL/, /.*KOOTENAY CHIROPRA/, /NISH DENTAL CLINIC/, /SUN LIFE.*/] },
     "Electronics & Software"           : { p: 5, r: [/Amazon Downloads.*/, /APPLE\.COM\/BILL/, /GOOGLE \*Google Storage/] },
-    "Fast Food"                        : { p: 5, r: [/A&W.*/, /ARBY'S.*/, /BOOSTER JUICE.*/, /CREPEWORKS/, /DAIRY QUEEN.*/, /HARVEYS.*/, /KFC/, /KUNG PAO WOK/, /MCDONALD'S.*/, /MAMA PIZZA.*/, /NEW YORK FRIES.*/, /PANAGO.*/, /PIZZA PIZZA.*/, /.*STONE COLD ICE CREAM.*/, /Subway.*/, /TACO BELL.*/, /TACO TIME CANTINA.*/, /TIM HORTON'?S.*/, /.*WAREHOUSE PIZZA/, /WENDY'?S.*/] },
+    "Fast Food"                        : { p: 5, r: [/A&W.*/, /ARBY'S.*/, /ARBYS.*/, /BOOSTER JUICE.*/, /CRANBROOK TRIPLE O.*/, /CREPEWORKS/, /DAIRY QUEEN.*/, /HARVEYS.*/, /KFC/, /KUNG PAO WOK/, /MCDONALD'S.*/, /MAMA PIZZA.*/, /NEW YORK FRIES.*/, /PANAGO.*/, /PIZZA PIZZA.*/, /.*STONE COLD ICE CREAM.*/, /Subway.*/, /TACO BELL.*/, /TACO TIME CANTINA.*/, /TIM HORTON'?S.*/, /.*WAREHOUSE PIZZA/, /WENDY'?S.*/] },
     "Fitness & Gym / Pool"             : { p: 5, r: [/AINSWORTH HOT SPRINGS.*/, /ARQ MOUNTAIN CENTRE/, /DISTRICT OF CENTRAL KOOTE/] },
-    "Gas & Fuel"                       : { p: 5, r: [/CBSA\/ASFC RYKERTS/, /CHEVRON.*/, /CHV40149 CRANBROOK CHE/, /CONOCO.*/, /COSTCO GAS.*/, /.*ESSO.*/, /EXXON.*/, /HUSKY.*/, /MOBIL@.*/, /PETRO.?CAN.*/, /SHELL.*/, /.*WESTMOND/] },
+    "Gas & Fuel"                       : { p: 5, r: [/CBSA\/ASFC RYKERTS/, /CENTEX CRESTON/, /CHEVRON.*/, /CHV40149 CRANBROOK CHE/, /CONOCO.*/, /COSTCO GAS.*/, /.*ESSO.*/, /EXXON.*/, /HUSKY.*/, /MOBIL@.*/, /PETRO.?CAN.*/, /.*SAMUELS STORE/, /SHELL.*/, /.*WESTMOND/] },
     "Groceries"                        : { p: 5, r: [/7[- ]ELEVEN.*/, /COSTCO WHOLESAL.*/, /FARAMAN FARM/, /FRESHCO.*/, /.*MARAR ORCHARD.*/, /.*MACS CONV. STORES/, /MACS CONVENIENCE STORE.*/, /.*MAX'S PLACE/, /PAUL'S SUPERETTE/, /PEALOW'S YOUR INDEPEND.*/, /REAL (CDN|CANADIAN) SUPER.*/, /SAFEWAY.*/, /SAVE ON FOODS.*/, /WALGREENS.*/, /WLOKA FARMS FRUIT STAND.*/, /WYNNDEL FOODS/] },
     "Hobbies"                          : { p: 5, r: [] },
     "Home"                             : { p: 5, r: [/CDN TIRE STORE.*/, /.*HOME HA.*/, /THE HOME DEPOT.*/] },
     "Insurance - Auto"                 : { p: 5, r: [/ICBC.*INS/] },
     "Insurance - Home"                 : { p: 5, r: [/TD Ins\/TD Assur.*INS/] },
     "Insurance - Travel"               : { p: 5, r: [/WESTERN FINANCIAL GROUP/] },
-    "Hotel"                            : { p: 5, r: [/BAYMONT INN.*/, /COUNTRY INN & SUITES.*/, /EXPEDIA.*/, /FAIRBRIDGE INN & SUITES.*/, /HOLIDAY INN EXPRESS.*/, /HYATT PLACE EDMONTON/, /MY PLACE HOTELS/, /RAMADA/, /SOUTHBRIDGE HOTEL.*/, /SUPER 8 MOTELS/, /WESTWOOD INN & SUITES/] },
+    "Hotel"                            : { p: 5, r: [/BAYMONT INN.*/, /COUNTRY INN & SUITES.*/, /EXPEDIA.*/, /FAIRBRIDGE INN & SUITES.*/, /HOLIDAY INN EXPRESS.*/, /Hotel at Booking.com/, /HYATT PLACE EDMONTON/, /MY PLACE HOTELS/, /RAMADA/, /SOUTHBRIDGE HOTEL.*/, /SUPER 8 MOTELS/, /WESTWOOD INN & SUITES/] },
     "Income - Primary"                 : { p: 5, r: [/INTUIT CANADA U.*PAY/] },
     "Income - Secondary"               : { p: 5, r: [/KTUNAXA KINBASK.*PAY/] },
     "Income - Tertiary (Dividends)"    : { p: 5, r: [/.*TFR-FR [0-9]{7}/] },
@@ -42,12 +42,12 @@ const categoryToVendorAndRulesMap = {
     "Pets - Horse"                     : { p: 5, r: [/SEND E-TFR.*/, /TANGLEFOOT VETERINARY.*/], c: t => t.description.indexOf("SEND") === -1 || [195,455,520,600].some(amt => amt === Math.abs(t.amount)) },
     "Parking"                          : { p: 5, r: [/CALGARY AIRPORT EXIT TOLL/, /.*PARKING.*/] },
     "Pharmacy"                         : { p: 5, r: [/CRESTON PHARMACY.*/, /SHOPPERS DRUG MART.*/] },
-    "Postage & Shipping"               : { p: 5, r: [/CPC \/ SCP.*/, /JAKES LANDING LLC/, /UPS\*.*/] },
+    "Postage & Shipping"               : { p: 5, r: [/CPC \/ SCP.*/, /FEDEX.*/, /JAKES LANDING LLC/, /UPS.*/] },
     "Registration & Licensing"         : { p: 5, r: [/ICBC.*/] },
-    "Restaurants"                      : { p: 5, r: [/APPLEBEES.*/, /BOSTONS? PIZZA.*/, /DENNY'S.*/, /MARLINS FAMILY RESTAUR/, /MONTANAS.*/, /OLIVE GARD.*/, /ROCKY RIVER GRILL/, /SWISS CHALET.*/] },
+    "Restaurants"                      : { p: 5, r: [/APPLEBEES.*/, /BOSTONS? PIZZA.*/, /CANYON COUNTRY STORE/, /CRACKER BARREL.*/i, /DENNY'S.*/, /ELLAS/, /I & J FUSION CUISINE/, /MARLINS FAMILY RESTAUR/, /MONTANAS.*/, /OLIVE GARD.*/, /ROCKY RIVER GRILL/, /SWISS CHALET.*/, /.*The Mountain Barn/] },
     "Service & Parts"                  : { p: 5, r: [/HIGH CALIBER AUTO COLL.*/, /INTEGRA TIRE/, /LORDCO PARTS.*/, /NAPA ASSOCIATE.*/] },
-    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRESTON 2ND HAND COLLECTI/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /MAWSON'S SPORTS/, /.*MODERN ALCHEMY.*/, /MORRIS FLOWERS/, /NAYAX CANADA INC MASTER/, /SANTA AND ME/, /SHUTTERFLY, INC\./, /SP FUTUREMOTIONINC/, /SQ \*HONEY BEE ZEN APIARIE/, /STYLETIFY/, /WAL-MART.*/, /WEST ED MALL LOCKER.*/, /WISH\.COM/, /YOUR DOLLAR STORE.*/] },
-    "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /E-TRANSFER.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /SEND E-TFR \*\*\*TCx/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/, /.*TFR-TO 3156554/, /.*TFR-TO 6330246/, /.*TFR-TO 3325B7J/, /.*TFR-TO 3469F0J/] },
+    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRESTON 2ND HAND COLLECTI/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /HORSEWORLD.*/, /MAWSON'S SPORTS/, /.*MODERN ALCHEMY.*/, /MORRIS FLOWERS/, /NAYAX CANADA INC MASTER/, /PAYPAL.*/, /SANTA AND ME/, /SHUTTERFLY, INC\./, /SP FUTUREMOTIONINC/, /SQ \*HONEY BEE ZEN APIARIE/, /STYLETIFY/, /WAL-MART.*/, /WEST ED MALL LOCKER.*/, /WISH\.COM/, /YOUR DOLLAR STORE.*/] },
+    "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /E-TRANSFER.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /SEND E-TFR \*\*\*TCx/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/, /.*TFR-TO 3156554/, /.*TFR-TO 6330246/, /.*TFR-TO 3325B7J/, /.*TFR-TO 3469F0J/, /.*TFR-TO 4131842/] },
     "Tuition"                          : { p: 5, r: [/IXL FAMILY SUB.*/] },
     "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
 };
@@ -64,6 +64,7 @@ const customCategorization = t => {
     if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 1273.84) { return "Shopping"; }              // Reimbursement for foster Christmas trip and cot
     if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 767.68) { return "Shopping"; }               // Reimbursement for foster cultural
     if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 519.45) { return "Shopping"; }               // Reimbursement for RS stuff
+    if (t.description.indexOf("HH094 TFR-FR 4131842") !== -1 && Math.abs(t.amount) === 5000.00) { return "Transfer"; }              // Internal transfer
 
     return null;
 };
