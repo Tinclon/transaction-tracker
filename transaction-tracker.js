@@ -65,6 +65,9 @@ const customCategorization = t => {
     if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 767.68) { return "Shopping"; }               // Reimbursement for foster cultural
     if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 519.45) { return "Shopping"; }               // Reimbursement for RS stuff
     if (t.description.indexOf("HH094 TFR-FR 4131842") !== -1 && Math.abs(t.amount) === 5000.00) { return "Transfer"; }              // Internal transfer
+    if (t.description.indexOf("IY461 TFR-FR 4131842") !== -1 && Math.abs(t.amount) === 9000.00) { return "Transfer"; }              // Internal transfer
+    if (t.description.indexOf("SEND E-TFR ***QpR") !== -1 && Math.abs(t.amount) === 600.00) { return "Vehicle"; }                   // Motorcycle
+    if (t.description.indexOf("SEND E-TFR ***Mfj") !== -1 && Math.abs(t.amount) === 3000.00) { return "Vehicle"; }                  // Motorcycle
 
     return null;
 };
