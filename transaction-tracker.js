@@ -49,7 +49,7 @@ const categoryToVendorAndRulesMap = {
     "Service & Parts"                  : { p: 5, r: [/HIGH CALIBER AUTO COLL.*/, /INTEGRA TIRE/, /LORDCO PARTS.*/, /NAPA ASSOCIATE.*/] },
     "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /.*BARGAIN SHOP.*/, /CRESTON 2ND HAND COLLECTI/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /HORSEWORLD.*/, /MAWSON'S SPORTS/, /.*MODERN ALCHEMY.*/, /MORRIS FLOWERS/, /NAYAX CANADA INC MASTER/, /PAYPAL.*/, /SANTA AND ME/, /SHUTTERFLY, INC\./, /SP FUTUREMOTIONINC/, /SQ \*HONEY BEE ZEN APIARIE/, /STYLETIFY/, /WAL-MART.*/, /WEST ED MALL LOCKER.*/, /WISH\.COM/, /YOUR DOLLAR STORE.*/] },
     "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /E-TRANSFER.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /SEND E-TFR \*\*\*TCx/, /PYT FRM: 89673156554/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/, /.*TFR-TO 3156554/, /.*TFR-TO 6330246/, /.*TFR-TO 3325B7J/, /.*TFR-TO 3469F0J/, /.*TFR-TO 4131842/] },
-    "Tuition"                          : { p: 5, r: [/IXL FAMILY SUB.*/, /IXL Learning/] },
+    "Tuition"                          : { p: 5, r: [/EDUCATION.COM/, /IXL FAMILY SUB.*/, /IXL Learning/] },
     "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
 };
 const customCategorization = t => {
@@ -70,6 +70,7 @@ const customCategorization = t => {
     if (t.description.indexOf("SEND E-TFR ***QpR") !== -1 && Math.abs(t.amount) === 600.00) { return "Vehicle"; }                   // Motorcycle
     if (t.description.indexOf("SEND E-TFR ***Mfj") !== -1 && Math.abs(t.amount) === 3000.00) { return "Vehicle"; }                  // Motorcycle
     if (t.description.indexOf("ICBC #75965") !== -1 && Math.abs(t.amount) === 460.00) { return "Vehicle"; }                         // Motorcycle
+    if (t.description.indexOf("IQ001 TFR-FR 4131842") !== -1 && Math.abs(t.amount) === 1000.00) { return "Transfer"; }              // Internal transfer
     if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 338.84) { return "Groceries"; }              // Reimbursement for RS stuff
     if (t.description.indexOf("UJ300 TFR-FR 3156554") !== -1 && Math.abs(t.amount) === 1900.00) { return "Vehicle"; }               // Motorcycle
 
