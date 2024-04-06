@@ -13,7 +13,7 @@ const categoryToVendorAndRulesMap = {
     "Arts/Exhibits/Theatre/Museum/Zoo" : { p: 5, r: [/DEVILS TOWER.*/, /.*CODY CAVE TOURS/, /CRAZY HORSE.*/, /SQ \*ESCAPE LEGENDS/, /FSY.*/, /Groupon, Inc./, /NIAGARA PARKS COMMISSION/, /PN KOOTENAY WEST GATE NP/, /TIVOLI THEATRE/] },
     "Allowance"                        : { p: 1, r: [/.*TFR-TO [ALST]N(SAV|SPD|TTH)/], c: t => [2.13,2.35,2.77,3.04,3.20,3.77,4.14,5.79,6.37,9.59,10.58,12.47,13.68,14.40,16.97,18.63,26.06,28.67].some(amt => amt === Math.abs(t.amount)) },
     "Amusement Park/Skiing"            : { p: 5, r: [/RED MOUNTAIN RESORT/, /RED SPORTS/] },
-    "Bank Fees & Charges"              : { p: 5, r: [/SEND E-TFR FEE/] },
+    "Bank Fees & Charges"              : { p: 5, r: [/ANNUAL FEE/, /SEND E-TFR FEE/] },
     "Books & Supplies"                 : { p: 5, r: [/CARDSTONBOO.*/, /Deseret Book.*/, /Kindle.*/] },
     "Clothing"                         : { p: 5, r: [/CALL IT SPRING.*/, /CLEO.*/, /COSTCO WHS.*/, /CRESTON VALLEY GLEANERS S/, /Decathlon Canada.*/, /HM West Edmonton Mall/, /LDS DIST CANADA/, /LDS SPOKANE CENTER.*/, /LEGEND LOGOS/, /MARK'S STORE.*/, /MISSION THRIFT STORE.*/, /MOUNTAIN WAREHOUSE/, /NORDSTROM RACK.*/, /NORTH 40 OUTFITTERS.*/, /OLD NAVY.*/, /RICKI'S.*/, /SKECHERS.*/, /SP BLOOMCHIC/, /SP MANITOBAH MUKLUKS/, /TARGET.*/] },
     "Donations"                        : { p: 5, r: [/Ch JesusChrist   DON/], c: t=> Math.abs(t.amount) !== 400 },
@@ -22,7 +22,7 @@ const categoryToVendorAndRulesMap = {
     "Fast Food"                        : { p: 5, r: [/2LEVYATSPOKANE/, /A&W.*/, /ARBY'S.*/, /ARBYS.*/, /BOOSTER JUICE.*/, /CRANBROOK TRIPLE O.*/, /CREPEWORKS/, /DAIRY QUEEN.*/, /HARVEYS.*/, /KFC/, /KUNG PAO WOK/, /MCDONALD'S.*/, /MAMA PIZZA.*/, /NEW YORK FRIES.*/, /PANAGO.*/, /PIZZA PIZZA.*/, /.*STONE COLD ICE CREAM.*/, /Subway.*/, /TACO BELL.*/, /TACO TIME CANTINA.*/, /TIM HORTON'?S.*/, /.*WAREHOUSE PIZZA/, /WENDY'?S.*/] },
     "Fitness & Gym / Pool"             : { p: 5, r: [/AINSWORTH HOT SPRINGS.*/, /ARQ MOUNTAIN CENTRE/, /DISTRICT OF CENTRAL KOOTE/, /PADI CANADA/, /PADPADICLUB/] },
     "Gas & Fuel"                       : { p: 5, r: [/CBSA\/ASFC RYKERTS/, /CENTEX CRESTON/, /CHEVRON.*/, /CHV40149 CRANBROOK CHE/, /CONOCO.*/, /COSTCO GAS.*/, /.*ESSO.*/, /EXXON.*/, /HUSKY.*/, /MOBIL@.*/, /PETRO.?CAN.*/, /.*SAMUELS STORE/, /SHELL.*/, /.*WESTMOND/] },
-    "Groceries"                        : { p: 5, r: [/7[- ]ELEVEN.*/, /COSTCO WHOLESAL.*/, /FARAMAN FARM/, /FRESHCO.*/, /.*MARAR ORCHARD.*/, /.*MACS CONV. STORES/, /MACS CONVENIENCE STORE.*/, /.*MAX'S PLACE/, /PAUL'S SUPERETTE/, /PEALOW'S YOUR INDEPEND.*/, /REAL (CDN|CANADIAN) SUPER.*/, /SAFEWAY.*/, /SAVE ON FOODS.*/, /WALGREENS.*/, /WLOKA FARMS FRUIT STAND.*/, /WYNNDEL FOODS/] },
+    "Groceries"                        : { p: 5, r: [/7[- ]ELEVEN.*/, /COSTCO WHOLESAL.*/, /FARAMAN FARM/, /FRESHCO.*/, /.*MARAR ORCHARD.*/, /.*MACS CONV. STORES/, /MACS CONVENIENCE STORE.*/, /.*MAX'S PLACE/, /PAUL'S SUPERETTE/, /PEALOW'S YOUR INDEPEND.*/, /REAL (CDN|CANADIAN) SUPER.*/, /SAFEWAY.*/, /SAVE ON FOODS.*/, /THE GOLDEN FLOUR BAKER/, /WALGREENS.*/, /WLOKA FARMS FRUIT STAND.*/, /WYNNDEL FOODS/] },
     "Hobbies"                          : { p: 5, r: [/HOBBY-LOBBY.*/] },
     "Home"                             : { p: 5, r: [/APPLIANCE PARTS/, /CDN TIRE STORE.*/, /.*HOME HA.*/, /THE HOME DEPOT.*/] },
     "Insurance - Auto"                 : { p: 5, r: [/ICBC.*INS/] },
@@ -76,6 +76,10 @@ const customCategorization = t => {
     if (t.description.indexOf("GC 9079-DEPOSIT") !== -1 && Math.abs(t.amount) === 129090.54) { return "Transfer"; }                 // Internal transfer
     if (t.description.indexOf("Ch JesusChrist   EXP") !== -1 && Math.abs(t.amount) === 205.49) { return "Groceries"; }              // Internal transfer
     if (t.description.indexOf("SEND E-TFR ***bJP") !== -1 && Math.abs(t.amount) === 30.00) { return "Clothing"; }                   // Clothing
+    if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 55.98) { return "Shopping"; }                // Reimbursement for foster something
+    if (t.description.indexOf("IU252 TFR-TO 4025031") !== -1 && Math.abs(t.amount) === 1000.00) { return "Shopping"; }              // Transfer
+
+
 
     return null;
 };
