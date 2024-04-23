@@ -10,7 +10,7 @@ const getFiles = srcpath => readdirSync(srcpath).filter(file => !lstatSync(join(
 
 const categoryToVendorAndRulesMap = {
     "Airfare & Travel"                 : { p: 5, r: [/AIR TRANSAT.*/, /DELTA AIR.*/, /Taxis on Booking/, /WESTJET.*/] },
-    "Arts/Exhibits/Theatre/Museum/Zoo" : { p: 5, r: [/DEVILS TOWER.*/, /.*CODY CAVE TOURS/, /CRAZY HORSE.*/, /SQ \*ESCAPE LEGENDS/, /FSY.*/, /Groupon, Inc./, /NIAGARA PARKS COMMISSION/, /PN KOOTENAY WEST GATE NP/, /TIVOLI THEATRE/] },
+    "Arts/Exhibits/Theatre/Museum/Zoo" : { p: 5, r: [/DEVILS TOWER.*/, /.*CODY CAVE TOURS/, /CRAZY HORSE.*/, /SQ \*ESCAPE LEGENDS/, /FSY.*/, /Groupon, Inc./i, /NIAGARA PARKS COMMISSION/, /PN KOOTENAY WEST GATE NP/, /TIVOLI THEATRE/] },
     "Allowance"                        : { p: 1, r: [/.*TFR-TO [ALST]N(SAV|SPD|TTH)/], c: t => [2.13,2.35,2.77,3.04,3.20,3.77,4.14,5.79,6.37,9.59,10.58,12.47,13.68,14.40,16.97,18.63,26.06,28.67].some(amt => amt === Math.abs(t.amount)) },
     "Amusement Park/Skiing"            : { p: 5, r: [/RED MOUNTAIN RESORT/, /RED SPORTS/] },
     "Bank Fees & Charges"              : { p: 5, r: [/ANNUAL FEE/, /SEND E-TFR FEE/] },
@@ -21,7 +21,7 @@ const categoryToVendorAndRulesMap = {
     "Electronics & Software"           : { p: 5, r: [/Amazon Downloads.*/, /APPLE\.COM\/BILL/, /GOOGLE \*Google Storage/, /SOURCE.*/] },
     "Fast Food"                        : { p: 5, r: [/2LEVYATSPOKANE/, /A&W.*/, /ARBY'S.*/, /ARBYS.*/, /BOOSTER JUICE.*/, /CRANBROOK TRIPLE O.*/, /CREPEWORKS/, /DAIRY QUEEN.*/, /HARVEYS.*/, /KFC/, /KUNG PAO WOK/, /MCDONALD'S.*/, /MAMA PIZZA.*/, /NEW YORK FRIES.*/, /PANAGO.*/, /PIZZA PIZZA.*/, /.*STONE COLD ICE CREAM.*/, /Subway.*/, /TACO BELL.*/, /TACO TIME CANTINA.*/, /TIM HORTON'?S.*/, /.*WAREHOUSE PIZZA/, /WENDY'?S.*/] },
     "Fitness & Gym / Pool"             : { p: 5, r: [/AINSWORTH HOT SPRINGS.*/, /ARQ MOUNTAIN CENTRE/, /DISTRICT OF CENTRAL KOOTE/, /PADI CANADA/, /PADPADICLUB/] },
-    "Gas & Fuel"                       : { p: 5, r: [/CBSA\/ASFC RYKERTS/, /CENTEX CRESTON/, /CHEVRON.*/, /CHV40149 CRANBROOK CHE/, /CONOCO.*/, /COSTCO GAS.*/, /.*ESSO.*/, /EXXON.*/, /HUSKY.*/, /MOBIL@.*/, /PETRO.?CAN.*/, /.*SAMUELS STORE/, /SHELL.*/, /.*WESTMOND/] },
+    "Gas & Fuel"                       : { p: 5, r: [/CBSA\/ASFC RYKERTS/, /CENTEX CRESTO.*/, /CHEVRON.*/, /CHV40149 CRANBROOK CHE/, /CONOCO.*/, /COSTCO GAS.*/, /.*ESSO.*/, /EXXON.*/, /HUSKY.*/, /MOBIL@.*/, /PETRO.?CAN.*/, /.*SAMUELS STORE/, /SHELL.*/, /.*WESTMOND/] },
     "Groceries"                        : { p: 5, r: [/7[- ]ELEVEN.*/, /COSTCO WHOLESAL.*/, /FARAMAN FARM/, /FRESHCO.*/, /.*MARAR ORCHARD.*/, /.*MACS CONV. STORES/, /MACS CONVENIENCE STORE.*/, /.*MAX'S PLACE/, /PAUL'S SUPERETTE/, /PEALOW'S YOUR INDEPEND.*/, /REAL (CDN|CANADIAN) SUPER.*/, /SAFEWAY.*/, /SAVE ON FOODS.*/, /THE GOLDEN FLOUR BAKER/, /WALGREENS.*/, /WLOKA FARMS FRUIT STAND.*/, /WYNNDEL FOODS/] },
     "Hobbies"                          : { p: 5, r: [/HOBBY-LOBBY.*/] },
     "Home"                             : { p: 5, r: [/APPLIANCE PARTS/, /CDN TIRE STORE.*/, /.*HOME HA.*/, /THE HOME DEPOT.*/] },
@@ -40,14 +40,16 @@ const categoryToVendorAndRulesMap = {
     "Office Supplies"                  : { p: 5, r: [/CRESTON CARD & STATION/, /STAPLES STORE.*/] },
     "Pets"                             : { p: 5, r: [/HOUND N MOUSER.*/, /.*PET ADOPTION.*/, /PETLAND.*/, /PETSMART.*/, /PET VALU CANADA INC./, /.*VETERINARY.*/] },
     "Pets - Dog"                       : { p: 5, r: [/SEND E-TFR.*/], c: t => t.description.indexOf("SEND E-TFR ***Pt6") !== -1 && Math.abs(t.amount) === 600 },
-    "Pets - Horse"                     : { p: 5, r: [/SEND E-TFR.*/, /TANGLEFOOT VETERINARY.*/], c: t => t.description.indexOf("SEND") === -1 || [195,455,520,600].some(amt => amt === Math.abs(t.amount)) },
+    "Pets - Horse"                     : { p: 5, r: [/SEND E-TFR.*/, /TANGLEFOOT VETERINARY.*/, /TOP CROP GARDEN FARM PET/], c: t => t.description.indexOf("SEND") === -1 || [195,455,520,600].some(amt => amt === Math.abs(t.amount)) },
     "Parking"                          : { p: 5, r: [/CALGARY AIRPORT EXIT TOLL/, /CITY OF CRANBROOK-AIRPORT/, /.*PARKING.*/] },
     "Pharmacy"                         : { p: 5, r: [/CRESTON PHARMACY.*/, /SHOPPERS DRUG MART.*/] },
     "Postage & Shipping"               : { p: 5, r: [/CPC \/ SCP.*/, /FEDEX.*/, /JAKES LANDING LLC/, /UPS.*/] },
     "Registration & Licensing"         : { p: 5, r: [/ICBC.*/, /Prov of BC- Doc Authent/] },
     "Restaurants"                      : { p: 5, r: [/APPLEBEES.*/, /BOSTONS? PIZZA.*/, /CANYON COUNTRY STORE/, /CRACKER BARREL.*/i, /DENNY'S.*/, /ELLAS/, /I & J FUSION CUISINE/, /MARLINS FAMILY RESTAUR/, /MONTANAS.*/, /OLIVE GARD.*/, /ROCKY RIVER GRILL/, /SMITTY'S FAMILY RESTAU/, /SWISS CHALET.*/, /.*The Mountain Barn/] },
-    "Service & Parts"                  : { p: 5, r: [/HIGH CALIBER AUTO COLL.*/, /INTEGRA TIRE/, /LORDCO PARTS.*/, /NAPA ASSOCIATE.*/] },
-    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /APPLE.COM\/CA/, /.*BARGAIN SHOP.*/, /CRESTON 2ND HAND COLLECTI/, /CRICUT/, /DOLLAR TREE.*/, /ETSY.*/i, /HORSEWORLD.*/, /MAWSON'S SPORTS/, /.*MODERN ALCHEMY.*/, /MORRIS FLOWERS/, /NAYAX CANADA INC MASTER/, /PAYPAL.*/, /SANTA AND ME/, /SHUTTERFLY, INC\./, /SP FUTUREMOTIONINC/, /SQ \*HONEY BEE ZEN APIARIE/, /STYLETIFY/, /WAL-MART.*/, /WEST ED MALL LOCKER.*/, /WISH\.COM/, /YOUR DOLLAR STORE.*/] },
+    "Service, Parts, & Maintenance"    : { p: 5, r: [/ARROW MOUNTAIN CARWASH/, /HIGH CALIBER AUTO COLL.*/, /INTEGRA TIRE/, /LORDCO PARTS.*/, /NAPA ASSOCIATE.*/] },
+    "Shopping"                         : { p: 5, r: [/Amazon\.ca.*/, /AMZN Mktp.*/, /APPLE.COM\/CA/, /.*BARGAIN SHOP.*/, /CRESTON 2ND HAND COLLECTI/, /CRICUT/, /DOLLAR TREE.*/, /DOLLARAMA.*/, /ETSY.*/i, /HORSEWORLD.*/, /MAWSON'S SPORTS/, /Microsoft\*Store/, /.*MODERN ALCHEMY.*/, /MORRIS FLOWERS/, /NAYAX CANADA INC MASTER/, /PAYPAL.*/, /SANTA AND ME/, /SHUTTERFLY, INC\./, /SP FUTUREMOTIONINC/, /SQ \*HONEY BEE ZEN APIARIE/, /STYLETIFY/, /WAL-MART.*/, /WEST ED MALL LOCKER.*/, /WISH\.COM/, /YOUR DOLLAR STORE.*/] },
+    "Tax - Income"                     : { p: 5, r: [/TAX REFUND +RIT/] },
+    "Tax - Property"                   : { p: 5, r: [] },
     "Transfer"                         : { p: 5, r: [/.*CASH WITHDRA.*/, /E-TRANSFER.*/, /PREAUTHORIZED PAYMENT/, /REWARDS REDEMPTION/, /SEND E-TFR \*\*\*TCx/, /PYT FRM: 89673156554/, /TD VISA PREAUTH PYMT/, /.*TFR-TO [ALST]N(SAV|SPD|TTH)/, /.*TFR-TO 3156554/, /.*TFR-TO 6330246/, /.*TFR-TO 3325B7J/, /.*TFR-TO 3469F0J/, /.*TFR-TO 4131842/] },
     "Tuition"                          : { p: 5, r: [/EDUCATION.COM/, /IXL FAMILY SUB.*/, /IXL Learning/, /THE POTTERY OC/] },
     "Utilities"                        : { p: 5, r: [/FORTISBC.*/i] },
@@ -78,8 +80,11 @@ const customCategorization = t => {
     if (t.description.indexOf("SEND E-TFR ***bJP") !== -1 && Math.abs(t.amount) === 30.00) { return "Clothing"; }                   // Clothing
     if (t.description.indexOf("Government of A  MSP") !== -1 && Math.abs(t.amount) === 55.98) { return "Shopping"; }                // Reimbursement for foster something
     if (t.description.indexOf("IU252 TFR-TO 4025031") !== -1 && Math.abs(t.amount) === 1000.00) { return "Shopping"; }              // Transfer
-
-
+    if (t.description.indexOf("SEND E-TFR ***tev") !== -1 && Math.abs(t.amount) === 3000.00) { return "Pets - Horse"; }             // Horse
+    if (t.description.indexOf("SEND E-TFR ***bVr") !== -1 && Math.abs(t.amount) === 3000.00) { return "Pets - Horse"; }             // Horse
+    if (t.description.indexOf("SEND E-TFR ***BhX") !== -1 && Math.abs(t.amount) === 3000.00) { return "Pets - Horse"; }             // Horse
+    if (t.description.indexOf("SEND E-TFR ***Gay") !== -1 && Math.abs(t.amount) === 1000.00) { return "Pets - Horse"; }             // Horse
+    if (t.description.indexOf("RDCK-CRESTON LA   _F") !== -1 && Math.abs(t.amount) === 45.38) { return "Home"; }                    // Dump trip
 
     return null;
 };
