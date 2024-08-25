@@ -95,8 +95,8 @@ const process = transactions => {
     const categoryToAmountByYearMonthMap = {};
     Object.values(transactions).forEach(transaction => {
         const date = transaction.date.split("/");
-        const isoDate = [date[2], date[0], date[1]].join("-");
         const yearMonth = [date[2], date[0]].join("-");
+        transaction.isoDate =  [date[2], date[0], date[1]].join("-");
 
         transaction.amount = parseFloat(`${transaction.debit}` || `-${transaction.credit}`);
 
@@ -115,7 +115,7 @@ const process = transactions => {
 
         // Add the transaction to the category
         categoryToAmountByYearMonthMap[yearMonth][category].a += transaction.amount;
-        categoryToAmountByYearMonthMap[yearMonth][category].t.push(`${dp(isoDate)}${np(transaction.amount)}\t${transaction.description}`);
+        categoryToAmountByYearMonthMap[yearMonth][category].t.push(`${dp(transaction.isoDate)}${np(transaction.amount)}\t${transaction.description}`);
     });
 
     output(categoryToAmountByYearMonthMap);
