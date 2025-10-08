@@ -94,9 +94,14 @@ const output = categoryToAmountByYearMonthMap => {
 const process = transactions => {
     const categoryToAmountByYearMonthMap = {};
     Object.values(transactions).forEach(transaction => {
-        const date = transaction.date.split("/");
-        const yearMonth = [date[2], date[0]].join("-");
-        transaction.isoDate =  [date[2], date[0], date[1]].join("-");
+        if (transaction.date.includes("-")) {
+            transaction.isoDate = transaction.date
+        } else {
+            const date = transaction.date.split("/");
+            transaction.isoDate = [date[2], date[0], date[1]].join("-");
+        }
+        const isoDate = transaction.isoDate.split("-")
+        const yearMonth = [isoDate[0], isoDate[1]].join("-");
 
         transaction.amount = parseFloat(`${transaction.debit}` || `-${transaction.credit}`);
 
